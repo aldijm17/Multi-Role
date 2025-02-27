@@ -40,8 +40,21 @@ DB_PASSWORD=
                 <div class="card mb-4">
                     <div class="card-body">
                         <h2 class="card-title">3. Buat Model dan Migrasi untuk User</h2>
+                        <p><i>Note : Jika model sudah ada cukup edit saja, jangan di buat baru!!</i></p>
                         <p>Jalankan perintah berikut untuk membuat model beserta migrasi:</p>
                         <pre><code>php artisan make:model User -m</code></pre>
+                        <p>Edit file model <code>User.php</code>menjadi seperti ini</p>
+                        <pre><code>
+    protected $table = 'users'; // Pastikan nama tabel benar
+    protected $primaryKey = 'id_user'; // Pastikan primary key sesuai
+    public $incrementing = true; // Jika `id` bukan string, tetap pakai auto increment
+    protected $keyType = 'int'; // Sesuaikan dengan tipe `id` di database
+
+    protected $fillable = [
+        'name', 'email', 'password', 'level' // Pastikan semua kolom bisa diisi
+    ];
+
+                        </code></pre>
                         <p>Edit file migrasi di <code>database/migrations/xxxx_xx_xx_xxxxxx_create_users_table.php</code>:</p>
                         <pre><code>
 public function up()
