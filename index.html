@@ -368,9 +368,9 @@ class AuthController extends Controller
             const codeBlock = button.nextElementSibling; // Ambil elemen <pre><code>
             const codeText = codeBlock.innerText; // Ambil teks kode
             navigator.clipboard.writeText(codeText).then(() => {
-                button.textContent = `<i class="bi bi-check">`; // Ubah teks tombol
+                button.textContent = '<i class="bi bi-check">'; // Ubah teks tombol
                 setTimeout(() => {
-                    button.textContent = `<i class="bi bi-copy">`; // Kembalikan teks tombol setelah 2 detik
+                    button.textContent = '<i class="bi bi-copy">'; // Kembalikan teks tombol setelah 2 detik
                 }, 2000);
             }).catch(err => {
                 console.error("Gagal menyalin teks: ", err);
