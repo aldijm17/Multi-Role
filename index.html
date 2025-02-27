@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentasi Implementasi Multi-Role di Laravel 12</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <h1 class="text-center mb-4">Dokumentasi Implementasi Multi-Role di Laravel 12</h1>
+                <p class="lead text-center">Panduan langkah demi langkah untuk menerapkan multi-role (admin dan user) di Laravel 12.</p>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">1. Instalasi Laravel 12</h2>
+                        <p>Pastikan Anda sudah menginstal Laravel 12. Jika belum, jalankan perintah berikut:</p>
+                        <pre><code>composer create-project laravel/laravel project_multirole</code></pre>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">2. Konfigurasi Database</h2>
+                        <p>Edit file <code>.env</code> untuk mengatur koneksi database:</p>
+                        <pre><code>
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nama_database
+DB_USERNAME=root
+DB_PASSWORD=
+                        </code></pre>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">3. Buat Model dan Migrasi untuk User</h2>
+                        <p>Jalankan perintah berikut untuk membuat model beserta migrasi:</p>
+                        <pre><code>php artisan make:model User -m</code></pre>
+                        <p>Edit file migrasi di <code>database/migrations/xxxx_xx_xx_xxxxxx_create_users_table.php</code>:</p>
+                        <pre><code>
+public function up()
+{
+    Schema::create('users', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->string('email')->unique();
+        $table->string('password');
+        $table->enum('role', ['admin', 'user'])->default('user');
+        $table->timestamps();
+    });
+}
+                        </code></pre>
+                        <p>Jalankan migrasi:</p>
+                        <pre><code>php artisan migrate</code></pre>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">4. Buat Seeder untuk User</h2>
+                        <p>Jalankan perintah:</p>
+                        <pre><code>php artisan make:seeder UserSeeder</code></pre>
+                        <p>Edit <code>database/seeders/UserSeeder.php</code>:</p>
+                        <pre><code>
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+
+class UserSeeder extends Seeder
+{
+    public function run()
+    {
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin'
+        ]);
+        User::create([
+            'name' => 'User',
+            'email' => 'user@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'user'
+        ]);
+    }
+}
+                        </code></pre>
+                        <p>Tambahkan seeder ke <code>DatabaseSeeder.php</code>:</p>
+                        <pre><code>$this->call(UserSeeder::class);</code></pre>
+                        <p>Jalankan seeder:</p>
+                        <pre><code>php artisan db:seed</code></pre>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">5. Buat Middleware untuk Multi-Role</h2>
+                        <p>Jalankan perintah:</p>
+                        <pre><code>
+php artisan make:middleware AdminMiddleware
+php artisan make:middleware UserMiddleware
+                        </code></pre>
+                        <p>Edit <code>app/Http/Middleware/AdminMiddleware.php</code>:</p>
+                        <pre><code>
+use Closure;
+use Illuminate\Support\Facades\Auth;
+
+class AdminMiddleware
+{
+    public function handle($request, Closure $next)
+    {
+        if (Auth::check() && Auth::user()->role === 'admin') {
+            return $next($request);
+        }
+        return redirect('/');
+    }
+}
+                        </code></pre>
+                        <p>Edit <code>app/Http/Middleware/UserMiddleware.php</code>:</p>
+                        <pre><code>
+class UserMiddleware
+{
+    public function handle($request, Closure $next)
+    {
+        if (Auth::check() && Auth::user()->role === 'user') {
+            return $next($request);
+        }
+        return redirect('/');
+    }
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">6. Daftarkan Middleware di <code>bootstrap/app.php</code></h2>
+                        <p>Tambahkan middleware ke dalam <code>bootstrap/app.php</code>:</p>
+                        <pre><code>
+    ->withMiddleware(function (Middleware $middleware) {
+        // Tambahkan Middleware di sini
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'user' => \App\Http\Middleware\UserMiddleware::class,
+        ]);
+    })
+                        </code></pre>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">7. Buat Routing untuk Role</h2>
+                        <p>Edit <code>routes/web.php</code>:</p>
+                        <pre><code>
+use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+});
+
+Route::middleware(['auth', 'user'])->group(function () {
+    Route::get('/user', function () {
+        return view('user.dashboard');
+    })->name('user.dashboard');
+});
+                        </code></pre>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">8. Buat Controller untuk Login</h2>
+                        <p>Jalankan perintah:</p>
+                        <pre><code>php artisan make:controller AuthController</code></pre>
+                        <p>Edit <code>app/Http/Controllers/AuthController.php</code>:</p>
+                        <pre><code>
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class AuthController extends Controller
+{
+    public function showLogin()
+    {
+        return view('auth.login');
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            return redirect()->route($user->role . '.dashboard');
+        }
+
+        return back()->withErrors(['email' => 'Invalid credentials']);
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/login');
+    }
+}
+                        </code></pre>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">9. Buat View Login</h2>
+                        <p>Buat file <code>resources/views/auth/login.blade.php</code>:</p>
+                        <pre><code>
+&lt;form method="POST" action="{{ route('login') }}"&gt;
+    @csrf
+    &lt;input type="email" name="email" required placeholder="Email"&gt;
+    &lt;input type="password" name="password" required placeholder="Password"&gt;
+    &lt;button type="submit"&gt;Login&lt;/button&gt;
+&lt;/form&gt;
+                        </code></pre>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">10. Jalankan Server</h2>
+                        <p>Jalankan server dengan perintah:</p>
+                        <pre><code>php artisan serve</code></pre>
+                        <p>Akses login di <code>http://127.0.0.1:8000/login</code>.</p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-5">
+                    <p class="text-muted">Dokumentasi ini sudah mencakup semua langkah yang diperlukan. Jika ada pertanyaan, silakan tanyakan! 🚀</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
