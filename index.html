@@ -41,9 +41,7 @@ DB_PASSWORD=
                     <div class="card-body">
                         <h2 class="card-title">3. Buat Model dan Migrasi untuk User</h2>
                         <p><i>Note : Jika model sudah ada cukup edit saja, jangan di buat baru!!</i></p>
-                        <p>Jalankan perintah berikut untuk membuat model beserta migrasi:</p>
-                        <pre><code>php artisan make:model User -m</code></pre>
-                        <p>Edit file model <code>User.php</code>menjadi seperti ini</p>
+                        <p>Edit file model <code>User.php</code> menjadi seperti ini</p>
                         <pre><code>
     protected $table = 'users'; // Pastikan nama tabel benar
     protected $primaryKey = 'id_user'; // Pastikan primary key sesuai
@@ -53,14 +51,16 @@ DB_PASSWORD=
     protected $fillable = [
         'name', 'email', 'password', 'level' // Pastikan semua kolom bisa diisi
     ];
-
                         </code></pre>
+                        <p>Jalankan perintah berikut untuk membuat migrasi:</p>
+                        <p><i>Note : jika Migrasi users sudah ada, cukup edit saja. Tidak perlu Untuk dibuat baru.</i></p>
+                        <pre><code>php artisan make:migration create_users_table</code></pre>
                         <p>Edit file migrasi di <code>database/migrations/xxxx_xx_xx_xxxxxx_create_users_table.php</code>:</p>
                         <pre><code>
 public function up()
 {
     Schema::create('users', function (Blueprint $table) {
-        $table->id();
+        $table->id('id_user');
         $table->string('name');
         $table->string('email')->unique();
         $table->string('password');
