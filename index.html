@@ -6,6 +6,30 @@
     <title>Dokumentasi Implementasi Multi-Role di Laravel 12</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Styling untuk tombol Copy */
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .copy-button:hover {
+            background-color: #0056b3;
+        }
+        .code-block {
+            position: relative;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -14,49 +38,66 @@
                 <h1 class="text-center mb-4">Dokumentasi Implementasi Multi-Role di Laravel 12</h1>
                 <p class="lead text-center">Panduan langkah demi langkah untuk menerapkan multi-role (admin dan user) di Laravel 12.</p>
 
+                <!-- Card 1: Instalasi Laravel 12 -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <h2 class="card-title">1. Instalasi Laravel 12</h2>
                         <p>Pastikan Anda sudah menginstal Laravel 12. Jika belum, jalankan perintah berikut:</p>
-                        <pre><code>composer create-project laravel/laravel project_multirole</code></pre>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>composer create-project laravel/laravel project_multirole</code></pre>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Card 2: Konfigurasi Database -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <h2 class="card-title">2. Konfigurasi Database</h2>
                         <p>Edit file <code>.env</code> untuk mengatur koneksi database:</p>
-                        <pre><code>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=nama_database
 DB_USERNAME=root
 DB_PASSWORD=
-                        </code></pre>
+                            </code></pre>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Card 3: Buat Model dan Migrasi untuk User -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <h2 class="card-title">3. Buat Model dan Migrasi untuk User</h2>
                         <p><i>Note : Jika model sudah ada cukup edit saja, jangan di buat baru!!</i></p>
-                        <p>Edit file model <code>User.php</code> menjadi seperti ini</p>
-                        <pre><code>
-    protected $table = 'users'; // Pastikan nama tabel benar
-    protected $primaryKey = 'id_user'; // Pastikan primary key sesuai
-    public $incrementing = true; // Jika `id` bukan string, tetap pakai auto increment
-    protected $keyType = 'int'; // Sesuaikan dengan tipe `id` di database
+                        <p>Edit file model <code>User.php</code> menjadi seperti ini:</p>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>
+protected $table = 'users'; // Pastikan nama tabel benar
+protected $primaryKey = 'id_user'; // Pastikan primary key sesuai
+public $incrementing = true; // Jika `id` bukan string, tetap pakai auto increment
+protected $keyType = 'int'; // Sesuaikan dengan tipe `id` di database
 
-    protected $fillable = [
-        'name', 'email', 'password', 'level' // Pastikan semua kolom bisa diisi
-    ];
-                        </code></pre>
+protected $fillable = [
+    'name', 'email', 'password', 'level' // Pastikan semua kolom bisa diisi
+];
+                            </code></pre>
+                        </div>
                         <p>Jalankan perintah berikut untuk membuat migrasi:</p>
-                        <p><i>Note : jika Migrasi users sudah ada, cukup edit saja. Tidak perlu Untuk dibuat baru.</i></p>
-                        <pre><code>php artisan make:migration create_users_table</code></pre>
+                        <p><i>Note : Jika migrasi users sudah ada, cukup edit saja. Tidak perlu dibuat baru.</i></p>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>php artisan make:migration create_users_table</code></pre>
+                        </div>
                         <p>Edit file migrasi di <code>database/migrations/xxxx_xx_xx_xxxxxx_create_users_table.php</code>:</p>
-                        <pre><code>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>
 public function up()
 {
     Schema::create('users', function (Blueprint $table) {
@@ -68,19 +109,29 @@ public function up()
         $table->timestamps();
     });
 }
-                        </code></pre>
+                            </code></pre>
+                        </div>
                         <p>Jalankan migrasi:</p>
-                        <pre><code>php artisan migrate</code></pre>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>php artisan migrate</code></pre>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Card 4: Buat Seeder untuk User -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <h2 class="card-title">4. Buat Seeder untuk User</h2>
                         <p>Jalankan perintah:</p>
-                        <pre><code>php artisan make:seeder UserSeeder</code></pre>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>php artisan make:seeder UserSeeder</code></pre>
+                        </div>
                         <p>Edit <code>database/seeders/UserSeeder.php</code>:</p>
-                        <pre><code>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -103,24 +154,37 @@ class UserSeeder extends Seeder
         ]);
     }
 }
-                        </code></pre>
+                            </code></pre>
+                        </div>
                         <p>Tambahkan seeder ke <code>DatabaseSeeder.php</code>:</p>
-                        <pre><code>$this->call(UserSeeder::class);</code></pre>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>$this->call(UserSeeder::class);</code></pre>
+                        </div>
                         <p>Jalankan seeder:</p>
-                        <pre><code>php artisan db:seed</code></pre>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>php artisan db:seed</code></pre>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Card 5: Buat Middleware untuk Multi-Role -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <h2 class="card-title">5. Buat Middleware untuk Multi-Role</h2>
                         <p>Jalankan perintah:</p>
-                        <pre><code>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>
 php artisan make:middleware AdminMiddleware
 php artisan make:middleware UserMiddleware
-                        </code></pre>
+                            </code></pre>
+                        </div>
                         <p>Edit <code>app/Http/Middleware/AdminMiddleware.php</code>:</p>
-                        <pre><code>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
@@ -134,9 +198,12 @@ class AdminMiddleware
         return redirect('/');
     }
 }
-                        </code></pre>
+                            </code></pre>
+                        </div>
                         <p>Edit <code>app/Http/Middleware/UserMiddleware.php</code>:</p>
-                        <pre><code>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>
 class UserMiddleware
 {
     public function handle($request, Closure $next)
@@ -147,15 +214,19 @@ class UserMiddleware
         return redirect('/');
     }
 }
-                        </code></pre>
+                            </code></pre>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Card 6: Daftarkan Middleware di bootstrap/app.php -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <h2 class="card-title">6. Daftarkan Middleware di <code>bootstrap/app.php</code></h2>
                         <p>Tambahkan middleware ke dalam <code>bootstrap/app.php</code>:</p>
-                        <pre><code>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>
     ->withMiddleware(function (Middleware $middleware) {
         // Tambahkan Middleware di sini
         $middleware->alias([
@@ -163,15 +234,19 @@ class UserMiddleware
             'user' => \App\Http\Middleware\UserMiddleware::class,
         ]);
     })
-                        </code></pre>
+                            </code></pre>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Card 7: Buat Routing untuk Role -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <h2 class="card-title">7. Buat Routing untuk Role</h2>
                         <p>Edit <code>routes/web.php</code>:</p>
-                        <pre><code>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -190,17 +265,24 @@ Route::middleware(['auth', 'user'])->group(function () {
         return view('user.dashboard');
     })->name('user.dashboard');
 });
-                        </code></pre>
+                            </code></pre>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Card 8: Buat Controller untuk Login -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <h2 class="card-title">8. Buat Controller untuk Login</h2>
                         <p>Jalankan perintah:</p>
-                        <pre><code>php artisan make:controller AuthController</code></pre>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>php artisan make:controller AuthController</code></pre>
+                        </div>
                         <p>Edit <code>app/Http/Controllers/AuthController.php</code>:</p>
-                        <pre><code>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -232,30 +314,39 @@ class AuthController extends Controller
         return redirect('/login');
     }
 }
-                        </code></pre>
+                            </code></pre>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Card 9: Buat View Login -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <h2 class="card-title">9. Buat View Login</h2>
                         <p>Buat file <code>resources/views/auth/login.blade.php</code>:</p>
-                        <pre><code>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>
 &lt;form method="POST" action="{{ route('login') }}"&gt;
     @csrf
     &lt;input type="email" name="email" required placeholder="Email"&gt;
     &lt;input type="password" name="password" required placeholder="Password"&gt;
     &lt;button type="submit"&gt;Login&lt;/button&gt;
 &lt;/form&gt;
-                        </code></pre>
+                            </code></pre>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Card 10: Jalankan Server -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <h2 class="card-title">10. Jalankan Server</h2>
                         <p>Jalankan server dengan perintah:</p>
-                        <pre><code>php artisan serve</code></pre>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <pre><code>php artisan serve</code></pre>
+                        </div>
                         <p>Akses login di <code>http://127.0.0.1:8000/login</code>.</p>
                     </div>
                 </div>
@@ -269,5 +360,20 @@ class AuthController extends Controller
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Fungsi untuk menyalin teks kode
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling; // Ambil elemen <pre><code>
+            const codeText = codeBlock.innerText; // Ambil teks kode
+            navigator.clipboard.writeText(codeText).then(() => {
+                button.textContent = "Copied!"; // Ubah teks tombol
+                setTimeout(() => {
+                    button.textContent = "Copy"; // Kembalikan teks tombol setelah 2 detik
+                }, 2000);
+            }).catch(err => {
+                console.error("Gagal menyalin teks: ", err);
+            });
+        }
+    </script>
 </body>
 </html>
